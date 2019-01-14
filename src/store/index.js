@@ -21,6 +21,7 @@ const store = new Vuex.Store({
         favorite: false,
         floor: 'nb02',
         room: '1',
+        priority: false,
       }, {
         id: 2,
         description: 'Kaputt!',
@@ -29,6 +30,7 @@ const store = new Vuex.Store({
         favorite: false,
         floor: 'nb02',
         room: '1',
+        priority: true,
       }, {
         id: 3,
         description: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam',
@@ -37,6 +39,7 @@ const store = new Vuex.Store({
         favorite: true,
         floor: 'nb02',
         room: '1',
+        priority: false,
       },
     ],
   },
@@ -54,15 +57,16 @@ const store = new Vuex.Store({
         a.favorite = !a.favorite;
       }
     },
-    addAnnotation(state, description) {
+    addAnnotation(state, a) {
       state.annotations.push({
         id: (new Date()).valueOf(),
-        description,
+        description: a.description,
         upvotes: 0,
         liked: false,
         favorite: false,
         floor: state.currentFloor,
         room: state.currentRoom,
+        priority: a.priority,
       });
     },
     setFloor(state, floor) {

@@ -137,7 +137,10 @@ export default {
 
   methods: {
     newAnnotation() {
-      this.$store.commit('addAnnotation', this.form.description);
+      this.$store.commit('addAnnotation', {
+        description: this.form.description,
+        priority: this.form.priority,
+      });
       this.form.description = '';
       this.showDialog = false;
     },
