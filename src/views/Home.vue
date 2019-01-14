@@ -39,6 +39,9 @@
             <v-textarea autofocus v-model="form.description" label="Beschreibung"></v-textarea>
           </v-flex>
           <v-flex xs12>
+            <v-checkbox v-model="form.priority" label="In der Priorität hochstufen"></v-checkbox>
+          </v-flex>
+          <v-flex xs12>
             <v-layout>
               <v-flex xs3>
                 <v-btn block><v-icon>attach_file</v-icon>Hochladen</v-btn>
@@ -116,6 +119,7 @@ export default {
       showDialog: false,
       form: {
         description: '',
+        priority: false,
       },
     };
   },
