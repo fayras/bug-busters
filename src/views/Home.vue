@@ -1,6 +1,6 @@
 <template>
   <div class="home" style="height: 100%">
-    <v-navigation-drawer app v-if="state === 1" right fixed permanent>
+    <portal to="drawer">
       <v-tabs grow>
         <v-tab>Annotationen</v-tab>
         <v-tab>Historie</v-tab>
@@ -26,7 +26,7 @@
         </v-tab-item>
         <v-tab-item>Historie...</v-tab-item>
       </v-tabs>
-    </v-navigation-drawer>
+    </portal>
     <v-dialog v-model="showDialog" max-width="600px">
       <v-card>
         <v-card-title>
@@ -118,6 +118,7 @@ export default {
       geoData,
       state: STATES.SCROLL,
       showDialog: false,
+      zooming: false,
       form: {
         description: '',
         priority: false,
@@ -126,8 +127,7 @@ export default {
   },
 
   mounted() {
-    this.$refs.map.mapObject.on('zoomend', this.toggleState);
-    this.$refs.map.mapObject.on('movestart', this.resetState);
+    this.$refs.map.mapObject.on('movestart', this.handleState);
   },
 
   computed: {
@@ -151,18 +151,16 @@ export default {
     toggleFav(annotation) {
       this.$store.commit('fav', annotation.id);
     },
-    toggleState() {
-      if (this.state === STATES.SCROLL) {
-        this.state = STATES.ZOOM;
-      } else {
+    handleState() {
+      if (!this.zooming) {
         this.resetState();
       }
+      this.zooming = false;
     },
     resetState() {
-      if (this.state === STATES.ZOOM) {
-        this.state = STATES.SCROLL;
-        this.$store.commit('setRoom', undefined);
-      }
+      this.state = STATES.SCROLL;
+      this.$store.commit('ui/showDrawer', false);
+      this.$store.commit('setRoom', undefined);
     },
     zoomUpdated(zoom) {
       this.zoom = zoom;
@@ -218,8 +216,14 @@ export default {
       this.info.code = null;
     },
     zoomToFeature(e) {
-      this.$refs.map.fitBounds(e.target.getBounds());
+      this.state = STATES.ZOOM;
+      this.zooming = true;
+      this.$store.commit('ui/showDrawer', true);
       this.$store.commit('setRoom', e.target.feature.properties.room);
+      setTimeout(() => {
+        const bounds = e.target.getBounds();
+        this.$refs.map.mapObject.fitBounds(bounds);
+      }, 240);
     },
     onEachFeature(feature, layer) {
       layer.on({
@@ -231,18 +235,22 @@ export default {
     handleClick(e) {
       if (this.state === STATES.SCROLL) {
         this.zoomToFeature(e);
-      } else {
+      } else if (this.state === STATES.ZOOM) {
         this.loadRoom(e);
+      } else {
+        this.resetState();
       }
     },
     loadRoom(e) {
       const { room } = e.target.feature.properties;
-      console.log('test', room);
-      this.$router.push({
-        name: 'room',
-        params: {
-          id: room,
-        },
+      this.$store.commit('ui/showDrawer', false);
+      this.$nextTick(() => {
+        this.$router.push({
+          name: 'room',
+          params: {
+            id: room,
+          },
+        });
       });
     },
     formatDate(d) {
