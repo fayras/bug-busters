@@ -10,6 +10,9 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
   state: {
+    currentUser: {
+      name: 'Santa',
+    },
     currentFloor: 'nb02',
     currentRoom: undefined,
     annotations: [
@@ -22,6 +25,10 @@ const store = new Vuex.Store({
         floor: 'nb02',
         room: '1',
         priority: false,
+        created_at: new Date(),
+        created_by: 'Klaus',
+        // open, claimed, done
+        status: 'open',
       }, {
         id: 2,
         description: 'Kaputt!',
@@ -31,6 +38,9 @@ const store = new Vuex.Store({
         floor: 'nb02',
         room: '1',
         priority: true,
+        created_at: new Date(),
+        created_by: 'Klaus',
+        status: 'open',
       }, {
         id: 3,
         description: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam',
@@ -40,6 +50,9 @@ const store = new Vuex.Store({
         floor: 'nb02',
         room: '1',
         priority: false,
+        created_at: new Date(),
+        created_by: 'Klaus',
+        status: 'open',
       },
     ],
   },
@@ -67,6 +80,9 @@ const store = new Vuex.Store({
         floor: state.currentFloor,
         room: state.currentRoom,
         priority: a.priority,
+        created_at: new Date(),
+        status: 'open',
+        created_by: state.currentUser.name,
       });
     },
     setFloor(state, floor) {

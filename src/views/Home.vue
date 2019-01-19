@@ -8,8 +8,8 @@
           <v-list three-line>
             <v-list-tile v-for="a in annotations" :key="a.id" @click="() => {}">
               <v-list-tile-content>
-                <v-list-tile-sub-title>{{ a.description }}</v-list-tile-sub-title>
-                <v-list-tile-sub-title>{{ a.date }}</v-list-tile-sub-title>
+                <v-list-tile-title>{{ a.description }}</v-list-tile-title>
+                <v-list-tile-sub-title>{{ formatDate(a.created_at) }}</v-list-tile-sub-title>
               </v-list-tile-content>
               <v-list-tile-action>
                 <v-btn flat icon :color="a.liked ? 'primary': ''" @click="toggleLike(a)">
@@ -93,6 +93,7 @@
 
 <script>
 // @ is an alias to /src
+import moment from 'moment';
 import { L } from 'vue2-leaflet';
 import geoData from '@/assets/geoData';
 
@@ -243,6 +244,9 @@ export default {
           id: room,
         },
       });
+    },
+    formatDate(d) {
+      return moment(d).locale('de').format('L LT');
     },
   },
 };
