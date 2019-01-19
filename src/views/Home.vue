@@ -107,9 +107,6 @@ export default {
   data() {
     return {
       activeItem: 0,
-      info: {
-        name: '', code: '',
-      },
       url: '../assets/logo.png',
       zoom: -1,
       center: [900, 700],
@@ -206,14 +203,9 @@ export default {
       if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
         layer.bringToFront();
       }
-
-      this.info.name = layer.feature.properties.name;
-      this.info.code = layer.feature.properties.code;
     },
     resetHighlight(e) {
       this.$refs.geojson.mapObject.resetStyle(e.target);
-      this.info.name = null;
-      this.info.code = null;
     },
     zoomToFeature(e) {
       this.state = STATES.ZOOM;
@@ -263,20 +255,5 @@ export default {
 <style scoped>
 .leaflet-container {
   background-color: #2f3b39;
-}
-
-.info {
-    width: 100px;
-    padding: 6px 8px;
-    font: 14px/16px Arial, Helvetica, sans-serif;
-    background: white;
-    background: rgba(255,255,255,0.8);
-    box-shadow: 0 0 15px rgba(0,0,0,0.2);
-    border-radius: 5px;
-    text-align: left;
-}
-.info h4 {
-    margin: 0 0 5px;
-    color: #777;
 }
 </style>
