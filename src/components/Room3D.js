@@ -1,7 +1,5 @@
-import * as THREE from 'three';
+/* eslint-disable */
 import { deepDispose } from '@/utils/deep-dispose';
-import OrbitControls from 'orbit-controls-es6';
-import GLTFLoader from 'three-gltf-loader';
 
 export default class Room3D {
   constructor(canvas, container) {
@@ -25,13 +23,13 @@ export default class Room3D {
     this.renderer.setPixelRatio(window.devicePixelRatio || 1);
     this.running = true;
 
-    this.gltfLoader = new GLTFLoader();
+    this.gltfLoader = new THREE.GLTFLoader();
 
     this.setup();
     this.tick();
     this.handleResize();
 
-    const controls = new OrbitControls(this.camera, this.renderer.domElement);
+    const controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
     controls.enabled = true;
     controls.maxDistance = 1500;
     controls.minDistance = 0;
@@ -65,11 +63,14 @@ export default class Room3D {
     const geometry = new THREE.BoxGeometry(1, 1, 1);
     const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
     const cube = new THREE.Mesh(geometry, material);
-    this.scene.add(cube);
+    // this.scene.add(cube);
 
-    this.camera.position.z = 5;
-    this.camera.position.x = 1000;
-    this.camera.position.y = -1;
+    var light = new THREE.AmbientLight( 0x404040, 5 ); // soft white light
+    this.scene.add( light );
+
+    this.camera.position.z = 1;
+    this.camera.position.x = 0;
+    this.camera.position.y = 0;
   }
 
   tick() {
