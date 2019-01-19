@@ -179,25 +179,40 @@ export default {
       return '#cce187';
     },
     style(feature) {
+      let color;
+      let fillOpacity;
+
+      if (
+        feature.properties.floor === this.$store.state.currentFloor
+        && feature.properties.room === this.$store.state.currentRoom
+      ) {
+        color = '#B8E6FF';
+        fillOpacity = 0.5;
+      } else {
+        // color = this.getColor(
+        //   this.$store.getters.byRoom(feature.properties.floor, feature.properties.room).length,
+        // );
+        color = '#83AF9B';
+        fillOpacity = 0.1;
+      }
+
       return {
-        fillColor: this.getColor(
-          this.$store.getters.byRoom(feature.properties.floor, feature.properties.room).length,
-        ),
+        fillColor: color,
         weight: 0,
         opacity: 1,
         color: 'white',
         // dashArray: '3',
-        fillOpacity: 0.7,
+        fillOpacity,
       };
     },
     highlightFeature(e) {
       const layer = e.target;
 
       layer.setStyle({
-        weight: 3,
+        weight: 2,
         color: '#fff',
         dashArray: '6',
-        fillOpacity: 0.7,
+        fillOpacity: 0.4,
       });
 
       if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
@@ -215,7 +230,7 @@ export default {
       setTimeout(() => {
         const bounds = e.target.getBounds();
         this.$refs.map.mapObject.fitBounds(bounds);
-      }, 240);
+      }, 310);
     },
     onEachFeature(feature, layer) {
       layer.on({
