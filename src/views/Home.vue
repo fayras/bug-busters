@@ -109,7 +109,7 @@ export default {
       activeItem: 0,
       url: '../assets/logo.png',
       zoom: -1,
-      center: [900, 700],
+      center: [1200, 1513],
       bounds: null,
       crs: L.CRS.Simple,
       geoData,

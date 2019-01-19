@@ -51,8 +51,8 @@ export default {
           value: 'nb1',
         },
         {
-          text: 'NA 1',
-          value: 'na1',
+          text: 'IB 02',
+          value: 'ib02',
         },
       ],
     };
