@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Vuetify from 'vuetify';
+import PortalVue from 'portal-vue';
 import 'vuetify/dist/vuetify.min.css'; // Vuesax styles
 
 import {
@@ -22,6 +23,7 @@ Vue.component('l-control', LControl);
 Vue.component('l-control-zoom', LControlZoom);
 
 Vue.use(Vuetify);
+Vue.use(PortalVue);
 
 /* eslint-disable */
 delete L.Icon.Default.prototype._getIconUrl;

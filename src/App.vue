@@ -1,11 +1,13 @@
 <template>
-  <div id="app">
     <v-app>
     <!-- <div id="nav">
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link>
     </div> -->
-      <v-toolbar dark fixed app class="nav">
+      <v-navigation-drawer v-model="drawer" app right :stateless="true">
+        <portal-target name="drawer"></portal-target>
+      </v-navigation-drawer>
+      <v-toolbar dark app>
         <v-toolbar-side-icon></v-toolbar-side-icon>
         <v-toolbar-title>BugBusters</v-toolbar-title>
         <v-btn flat>
@@ -26,10 +28,9 @@
         ></v-autocomplete>
       </v-toolbar>
       <v-content>
-          <router-view></router-view>
+        <router-view></router-view>
       </v-content>
     </v-app>
-  </div>
 </template>
 
 <script>
@@ -58,6 +59,10 @@ export default {
   },
 
   computed: {
+    drawer: {
+      get() { return this.$store.state.ui.showDrawer; },
+      set(val) { this.$store.commit('ui/showDrawer', val); },
+    },
     floor: {
       get() {
         return this.$store.state.currentFloor;
@@ -78,19 +83,5 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  height: 100%;
-}
-#nav {
-  padding: 30px;
-  position: absolute;
-}
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
 }
 </style>
