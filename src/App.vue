@@ -26,6 +26,7 @@
           hide-details
           label="Ebene auswählen..."
         ></v-autocomplete>
+        <v-btn flat icon><v-icon>aspect_ratio</v-icon></v-btn>
       </v-toolbar>
       <v-content>
         <router-view></router-view>
@@ -83,5 +84,17 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+}
+
+.leaflet-control-zoom-in, .leaflet-control-zoom-out {
+  width: 34px !important;
+  height: 34px !important;
+  color: white !important;
+  border: 2px solid white !important;
+  background-color: rgba(0, 0, 0, 0.6) !important;
+}
+
+.leaflet-control-zoom-in {
+  margin-bottom: 10px;
 }
 </style>
