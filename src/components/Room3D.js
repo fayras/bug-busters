@@ -34,10 +34,8 @@ export default class Room3D {
     this.tick();
     this.handleResize();
 
-    const controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
-    controls.enabled = true;
-    controls.maxDistance = 1500;
-    controls.minDistance = 0;
+    this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+    this.controls.maxDistance = 1500;
   }
 
   loadRoom() {
@@ -50,8 +48,8 @@ export default class Room3D {
 
   destroy() {
     this.running = false;
-    this.canvas.removeEventListener( 'mousemove', this.onDocumentMouseMove.bind(this) );
-    this.canvas.removeEventListener( 'click', this.onClickHandler.bind(this) );
+    this.canvas.removeEventListener('mousemove', this.onDocumentMouseMove.bind(this));
+    this.canvas.removeEventListener('click', this.onClickHandler.bind(this));
     while (this.scene.children.length > 0) {
       const object = this.scene.children[this.scene.children.length - 1];
       deepDispose(object);
@@ -87,6 +85,9 @@ export default class Room3D {
     if (!this.running) return;
     requestAnimationFrame(() => this.tick());
     this.render();
+    if(this.onRenderCallback) {
+      this.onRenderCallback();
+    }
     // const time = performance.now();
     // this.animation.update(time * 0.007);
     this.renderer.render(this.scene, this.camera);
@@ -126,11 +127,19 @@ export default class Room3D {
 
   onClickHandler(event) {
     if(this.onClickCallback && this.intersected) {
-      this.onClickCallback(this.intersected)
+      this.onClickCallback(this.intersected);
     }
   }
 
   onClick(func) {
-    this.onClickCallback = func
+    this.onClickCallback = func;
+  }
+
+  onRender(func) {
+    this.onRenderCallback = func;
+  }
+
+  onCameraChange(func) {
+    this.controls.addEventListener('change', () => func());
   }
 }
