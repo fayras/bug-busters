@@ -28,41 +28,7 @@
       </v-tabs>
     </portal>
     <v-dialog v-model="showDialog" max-width="600px">
-      <v-card>
-        <v-card-title>
-          <span class="headline">
-            Neue Annotation
-          </span>
-        </v-card-title>
-        <v-card-text>
-          <v-flex xs12>
-            <v-textarea autofocus v-model="form.description" label="Beschreibung"></v-textarea>
-          </v-flex>
-          <v-flex xs12>
-            <v-checkbox v-model="form.priority" label="In der Priorität hochstufen"></v-checkbox>
-          </v-flex>
-          <v-flex xs12>
-            <v-layout>
-              <v-flex xs3>
-                <v-btn block><v-icon>attach_file</v-icon>Hochladen</v-btn>
-              </v-flex>
-              <v-flex>
-                <v-text-field label="Datei hochladen..."></v-text-field>
-              </v-flex>
-            </v-layout>
-          </v-flex>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="blue darken-1"
-            flat
-            @click="newAnnotation"
-          >
-            Speichern
-          </v-btn>
-        </v-card-actions>
-      </v-card>
+      <annotation-card></annotation-card>
     </v-dialog>
     <v-btn v-if="state === 1" fixed dark fab bottom right @click="showDialog = true">
       <v-icon>add</v-icon>
@@ -96,6 +62,7 @@
 import moment from 'moment';
 import { L } from 'vue2-leaflet';
 import geoData from '@/assets/geoData';
+import AnnotationCard from '@/components/AnnotationCard.vue';
 
 const STATES = {
   SCROLL: 0,
@@ -104,6 +71,7 @@ const STATES = {
 
 export default {
   name: 'home',
+  components: { AnnotationCard },
   data() {
     return {
       activeItem: 0,
