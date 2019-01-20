@@ -30,7 +30,10 @@
     <v-dialog v-model="showDialog" max-width="600px">
       <annotation-card></annotation-card>
     </v-dialog>
-    <v-btn v-if="state === 1" fixed dark fab bottom right @click="showDialog = true">
+    <v-dialog v-model="showDialogNew" max-width="600px">
+      <new-annotation-card></new-annotation-card>
+    </v-dialog>
+    <v-btn v-if="state === 1" fixed dark fab bottom right @click="showDialogNew = true">
       <v-icon>add</v-icon>
     </v-btn>
     <l-map
@@ -63,6 +66,7 @@ import moment from 'moment';
 import { L } from 'vue2-leaflet';
 import geoData from '@/assets/geoData';
 import AnnotationCard from '@/components/AnnotationCard.vue';
+import NewAnnotationCard from '@/components/NewAnnotationCard.vue';
 
 const STATES = {
   SCROLL: 0,
@@ -71,7 +75,7 @@ const STATES = {
 
 export default {
   name: 'home',
-  components: { AnnotationCard },
+  components: { AnnotationCard, NewAnnotationCard },
   data() {
     return {
       activeItem: 0,
@@ -83,6 +87,7 @@ export default {
       geoData,
       state: STATES.SCROLL,
       showDialog: false,
+      showDialogNew: false,
       zooming: false,
       form: {
         description: '',
