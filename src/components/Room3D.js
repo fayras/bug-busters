@@ -5,6 +5,8 @@ export default class Room3D {
   constructor(canvas, container) {
     this.canvas = canvas;
     this.container = container;
+    this.mouse = new THREE.Vector2();
+    this.intersected = null;
 
     const { width, height } = canvas;
 
@@ -24,6 +26,9 @@ export default class Room3D {
     this.running = true;
 
     this.gltfLoader = new THREE.GLTFLoader();
+    this.raycaster = new THREE.Raycaster();
+    document.addEventListener( 'mousemove', this.onDocumentMouseMove.bind(this), false );
+    document.addEventListener( 'click', this.onClickHandler.bind(this) );
 
     this.setup();
     this.tick();
@@ -45,6 +50,8 @@ export default class Room3D {
 
   destroy() {
     this.running = false;
+    document.removeEventListener( 'mousemove', this.onDocumentMouseMove.bind(this) );
+    document.removeEventListener( 'click', this.onClickHandler.bind(this) );
     while (this.scene.children.length > 0) {
       const object = this.scene.children[this.scene.children.length - 1];
       deepDispose(object);
@@ -76,9 +83,27 @@ export default class Room3D {
   tick() {
     if (!this.running) return;
     requestAnimationFrame(() => this.tick());
+    this.render();
     // const time = performance.now();
     // this.animation.update(time * 0.007);
     this.renderer.render(this.scene, this.camera);
+  }
+
+  render() {
+    this.raycaster.setFromCamera(this.mouse, this.camera);
+    const intersects = this.raycaster.intersectObjects(this.scene.children, true);
+    if (intersects.length > 0) {
+      if (this.intersected) this.intersected.point = intersects[0].point
+      if (this.intersected != intersects[0].object) {
+        if (this.intersected) this.intersected.material.emissive.setHex(this.intersected.currentHex);
+        this.intersected = intersects[0].object;
+        this.intersected.currentHex = this.intersected.material.emissive.getHex();
+        this.intersected.material.emissive.setHex(0xff0000);
+      }
+    } else {
+      if (this.intersected) this.intersected.material.emissive.setHex(this.intersected.currentHex);
+      this.intersected = null;
+    }
   }
 
   handleResize() {
@@ -88,5 +113,21 @@ export default class Room3D {
     this.renderer.setSize(width, height);
     this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
+  }
+
+  onDocumentMouseMove(event) {
+    event.preventDefault();
+		this.mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+		this.mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+  }
+
+  onClickHandler(event) {
+    if(this.onClickCallback && this.intersected) {
+      this.onClickCallback(this.intersected)
+    }
+  }
+
+  onClick(func) {
+    this.onClickCallback = func
   }
 }

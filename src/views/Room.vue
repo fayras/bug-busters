@@ -44,6 +44,7 @@ export default {
   },
   mounted() {
     this.room = new Room3D(this.$refs.canvas, this.$refs.container);
+    this.room.onClick(intersect => console.log(intersect));
     this.$nextTick(() => {
       this.room.handleResize();
       this.room.loadRoom();
