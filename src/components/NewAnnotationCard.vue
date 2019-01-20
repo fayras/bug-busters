@@ -15,7 +15,7 @@
             <v-card-text class="text-xs-left fill-height">
               <v-layout column justify-space-between fill-height >
                 <v-flex d-flex xs12 style="flex-basis:auto">
-                  <v-textarea box autofocus label="Beschreibung">
+                  <v-textarea v-model="desc" box autofocus label="Beschreibung">
 
                   </v-textarea>
                 </v-flex>
@@ -24,13 +24,17 @@
                   <v-layout column>
                     <v-flex xs12>
                       <v-text-field
+                        v-model="tags"
                         box
                         label="Tags"
                         hint="Es können mehrere Tags kommasepariert eingetragen werden"
                       ></v-text-field>
                     </v-flex>
                     <v-flex xs12>
-                      <v-checkbox label="In der Priorität hochstufen"></v-checkbox>
+                      <v-checkbox
+                        v-model="priority"
+                        label="In der Priorität hochstufen"
+                      ></v-checkbox>
                     </v-flex>
                   </v-layout>
                 </v-flex>
@@ -41,7 +45,7 @@
     <v-divider></v-divider>
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn @click="() => this.$emit('save')" flat color="primary">Speichern</v-btn>
+      <v-btn @click="emit" flat color="primary">Speichern</v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -49,10 +53,27 @@
 <script>
 export default {
   name: 'AnnotationCard',
-  props: {
-    msg: String,
+  data() {
+    return {
+      desc: '',
+      tags: '',
+      priority: false,
+    };
   },
 
+  methods: {
+    emit() {
+      this.$emit('save', {
+        description: this.desc,
+        tags: this.tags,
+        priority: this.priority,
+      });
+
+      this.desc = '';
+      this.tags = '';
+      this.priority = false;
+    },
+  },
 };
 </script>
 

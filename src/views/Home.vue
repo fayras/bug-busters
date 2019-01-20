@@ -31,7 +31,7 @@
       <annotation-card></annotation-card>
     </v-dialog>
     <v-dialog v-model="showDialogNew" max-width="600px">
-      <new-annotation-card></new-annotation-card>
+      <new-annotation-card @save="newAnnotation"></new-annotation-card>
     </v-dialog>
     <v-btn v-if="state === 1" fixed dark fab bottom right @click="showDialogNew = true">
       <v-icon>add</v-icon>
@@ -89,10 +89,6 @@ export default {
       showDialog: false,
       showDialogNew: false,
       zooming: false,
-      form: {
-        description: '',
-        priority: false,
-      },
     };
   },
 
@@ -107,13 +103,13 @@ export default {
   },
 
   methods: {
-    newAnnotation() {
+    newAnnotation(a) {
       this.$store.commit('addAnnotation', {
-        description: this.form.description,
-        priority: this.form.priority,
+        description: a.description,
+        priority: a.priority,
+        tags: a.tags,
       });
-      this.form.description = '';
-      this.showDialog = false;
+      this.showDialogNew = false;
     },
     toggleLike(annotation) {
       this.$store.commit('like', annotation.id);
