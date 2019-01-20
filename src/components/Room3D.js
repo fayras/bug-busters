@@ -27,8 +27,8 @@ export default class Room3D {
 
     this.gltfLoader = new THREE.GLTFLoader();
     this.raycaster = new THREE.Raycaster();
-    document.addEventListener( 'mousemove', this.onDocumentMouseMove.bind(this), false );
-    document.addEventListener( 'click', this.onClickHandler.bind(this) );
+    this.canvas.addEventListener( 'mousemove', this.onDocumentMouseMove.bind(this), false );
+    this.canvas.addEventListener( 'click', this.onClickHandler.bind(this) );
 
     this.setup();
     this.tick();
@@ -41,7 +41,7 @@ export default class Room3D {
   }
 
   loadRoom() {
-    this.gltfLoader.load('/models/big_room/scene.gltf', (gltf) => {
+    this.gltfLoader.load('/models/test/test_env.gltf', (gltf) => {
       this.scene.add(gltf.scene);
     }, undefined, (error) => {
       console.error(error);
@@ -50,8 +50,8 @@ export default class Room3D {
 
   destroy() {
     this.running = false;
-    document.removeEventListener( 'mousemove', this.onDocumentMouseMove.bind(this) );
-    document.removeEventListener( 'click', this.onClickHandler.bind(this) );
+    this.canvas.removeEventListener( 'mousemove', this.onDocumentMouseMove.bind(this) );
+    this.canvas.removeEventListener( 'click', this.onClickHandler.bind(this) );
     while (this.scene.children.length > 0) {
       const object = this.scene.children[this.scene.children.length - 1];
       deepDispose(object);
@@ -74,6 +74,9 @@ export default class Room3D {
 
     var light = new THREE.AmbientLight( 0x404040, 5 ); // soft white light
     this.scene.add( light );
+
+    var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+    this.scene.add( directionalLight );
 
     this.camera.position.z = 1;
     this.camera.position.x = 0;
@@ -117,8 +120,8 @@ export default class Room3D {
 
   onDocumentMouseMove(event) {
     event.preventDefault();
-		this.mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-		this.mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+    this.mouse.x = ((event.offsetX - this.renderer.domElement.offsetLeft) / this.renderer.domElement.width) * 2 - 1;
+    this.mouse.y = -((event.offsetY - this.renderer.domElement.offsetTop) / this.renderer.domElement.height) * 2 + 1;
   }
 
   onClickHandler(event) {
