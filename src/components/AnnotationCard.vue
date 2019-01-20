@@ -1,9 +1,9 @@
 <template>
   <v-card>
     <v-layout row>
-      <v-flex xs5>
+      <v-flex xs5 style="min-width: 43%;">
         <v-img
-          src="https://cdn.vuetifyjs.com/images/cards/desert.jpg"
+          src="./img/chair.jpg"
           aspect-ratio="0.6"
         ></v-img>
       </v-flex>
@@ -11,15 +11,33 @@
         <v-tabs grow>
           <v-tab>Meldung</v-tab>
           <v-tab>Kommentare</v-tab>
-          <v-tab-item>
-            <v-card-text class="text-xs-left">
-              <v-layout column justify-space-between fill-height>
-                <div>
-                  Located two hours south of Sydney in the <br>
-                  Southern Highlands of New South Wales, ...
-                </div>
-                <v-checkbox label="In der Priorität hochstufen"></v-checkbox>
-                <v-flex xs12>#tags #tags #tags</v-flex>
+          <v-tab-item class="tab-item-wrapper">
+            <v-card-text class="text-xs-left fill-height">
+              <v-layout column justify-space-between fill-height >
+                <v-flex d-flex xs12 style="flex-basis:auto">
+                  <div style="overflow-y: auto">
+                    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
+                     tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
+                     vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren
+                     no sea takimata sanctus est Lorem ipsum dolor sit amet.
+                  </div>
+                </v-flex>
+                <v-flex xs12 style="flex-basis:auto"></v-flex>
+                <v-flex d-flex xs12 style="flex-basis:auto">
+                  <v-layout column>
+                    <v-flex xs12>
+                      <v-checkbox label="In der Priorität hochstufen"></v-checkbox>
+                    </v-flex>
+                    <v-flex xs12>
+                      <span class="body-1 grey--text text--lighten-1">
+                        Eingestellt von Dimitri vor 19 Stunden
+                      </span>
+                    </v-flex>
+                    <v-flex xs12>
+                      <span class="body-1 grey--text text--lighten-1">#tags #tags #tags</span>
+                    </v-flex>
+                  </v-layout>
+                </v-flex>
               </v-layout>
             </v-card-text>
           </v-tab-item>
@@ -69,5 +87,10 @@ export default {
 <style scoped>
 .zero-padding {
   padding: 0 !important;
+}
+
+.tab-item-wrapper {
+  /* vuetify sets the v-tabs__container height to 48px */
+  height: calc(50vh - 96px)
 }
 </style>
