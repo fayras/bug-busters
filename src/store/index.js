@@ -15,6 +15,7 @@ const store = new Vuex.Store({
     },
     currentFloor: 'ib02',
     currentRoom: undefined,
+    selectedAnnotationId: undefined,
     annotations: [
       {
         id: 1,
@@ -29,6 +30,8 @@ const store = new Vuex.Store({
         created_by: 'Klaus',
         // open, claimed, done
         status: 'open',
+        tags: 'test,asd,asd',
+        img: '',
       }, {
         id: 2,
         description: 'Kaputt!',
@@ -41,6 +44,8 @@ const store = new Vuex.Store({
         created_at: new Date(),
         created_by: 'Klaus',
         status: 'open',
+        tags: '',
+        img: './img/chair.jpg',
       }, {
         id: 3,
         description: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam',
@@ -53,6 +58,8 @@ const store = new Vuex.Store({
         created_at: new Date(),
         created_by: 'Klaus',
         status: 'open',
+        tags: '',
+        img: './img/chair.jpg',
       },
     ],
   },
@@ -93,8 +100,15 @@ const store = new Vuex.Store({
       const s = state;
       s.currentRoom = room;
     },
+    selectAnnotation(state, id) {
+      const s = state;
+      s.selectedAnnotationId = id;
+    },
   },
   getters: {
+    selectedAnnotation(state) {
+      return state.annotations.find(a => a.id === state.selectedAnnotationId);
+    },
     currentAnnotations(state) {
       return state.annotations.filter(
         a => a.floor === state.currentFloor && a.room === state.currentRoom,

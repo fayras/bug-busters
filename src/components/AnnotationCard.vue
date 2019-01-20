@@ -1,9 +1,10 @@
 <template>
+<v-dialog v-model="showDialog" max-width="600px">
   <v-card>
     <v-layout row>
       <v-flex xs5 style="min-width: 43%;">
         <v-img
-          src="./img/chair.jpg"
+          :src="annotation.img"
           aspect-ratio="0.6"
         ></v-img>
       </v-flex>
@@ -15,12 +16,7 @@
             <v-card-text class="text-xs-left fill-height">
               <v-layout column justify-space-between fill-height >
                 <v-flex d-flex xs12 style="flex-basis:auto">
-                  <div style="overflow-y: auto">
-                    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-                     tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-                     vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren
-                     no sea takimata sanctus est Lorem ipsum dolor sit amet.
-                  </div>
+                  <div style="overflow-y: auto">{{ annotation.description }}</div>
                 </v-flex>
                 <v-flex xs12 style="flex-basis:auto"></v-flex>
                 <v-flex d-flex xs12 style="flex-basis:auto">
@@ -30,11 +26,11 @@
                     </v-flex>
                     <v-flex xs12>
                       <span class="body-1 grey--text text--lighten-1">
-                        Eingestellt von Dimitri vor 19 Stunden
+                        Eingestellt von {{ annotation.created_by }} {{ annotation.created_at }}
                       </span>
                     </v-flex>
                     <v-flex xs12>
-                      <span class="body-1 grey--text text--lighten-1">#tags #tags #tags</span>
+                      <span class="body-1 grey--text text--lighten-1">{{ annotation.tags }}</span>
                     </v-flex>
                   </v-layout>
                 </v-flex>
@@ -66,21 +62,38 @@
     </v-layout>
     <v-divider></v-divider>
     <v-card-actions>
-      <v-btn flat icon><v-icon>favorite</v-icon></v-btn>
+      <v-btn flat icon><v-icon>notifications</v-icon></v-btn>
       <v-btn flat icon><v-icon>thumb_up</v-icon></v-btn>
       <v-spacer></v-spacer>
       <v-btn flat color="primary">Blabla</v-btn>
     </v-card-actions>
   </v-card>
+</v-dialog>
 </template>
 
 <script>
 export default {
   name: 'AnnotationCard',
-  props: {
-    msg: String,
+  data() {
+    return {
+
+    };
   },
 
+  computed: {
+    showDialog: {
+      get() { return !!this.$store.getters.selectedAnnotation; },
+      set(flag) {
+        if (!flag) {
+          this.$store.commit('selectAnnotation');
+        }
+      },
+    },
+
+    annotation() {
+      return this.$store.getters.selectedAnnotation || {};
+    },
+  },
 };
 </script>
 

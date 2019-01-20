@@ -6,19 +6,23 @@
         <v-tab>Historie</v-tab>
         <v-tab-item>
           <v-list three-line>
-            <v-list-tile v-for="a in annotations" :key="a.id" @click="() => {}">
+            <v-list-tile
+              v-for="a in annotations"
+              :key="a.id"
+              @click="() => selectAnnotation(a.id)"
+            >
               <v-list-tile-content>
                 <v-list-tile-title>{{ a.description }}</v-list-tile-title>
                 <v-list-tile-sub-title>{{ formatDate(a.created_at) }}</v-list-tile-sub-title>
               </v-list-tile-content>
               <v-list-tile-action>
-                <v-btn flat icon :color="a.liked ? 'primary': ''" @click="toggleLike(a)">
+                <v-btn flat icon :color="a.liked ? 'primary': ''" @click.stop="toggleLike(a)">
                   <v-icon>thumb_up</v-icon>
                 </v-btn>
               </v-list-tile-action>
               <v-list-tile-action style="min-width: 32px;">
-                <v-btn flat icon :color="a.favorite ? 'primary': ''" @click="toggleFav(a)">
-                  <v-icon>favorite</v-icon>
+                <v-btn flat icon :color="a.favorite ? 'primary': ''" @click.stop="toggleFav(a)">
+                  <v-icon>notifications</v-icon>
                 </v-btn>
               </v-list-tile-action>
             </v-list-tile>
@@ -27,9 +31,7 @@
         <v-tab-item>Historie...</v-tab-item>
       </v-tabs>
     </portal>
-    <v-dialog v-model="showDialog" max-width="600px">
-      <annotation-card></annotation-card>
-    </v-dialog>
+    <annotation-card></annotation-card>
     <v-dialog v-model="showDialogNew" max-width="600px">
       <new-annotation-card @save="newAnnotation"></new-annotation-card>
     </v-dialog>
@@ -86,7 +88,6 @@ export default {
       crs: L.CRS.Simple,
       geoData,
       state: STATES.SCROLL,
-      showDialog: false,
       showDialogNew: false,
       zooming: false,
     };
@@ -103,6 +104,9 @@ export default {
   },
 
   methods: {
+    selectAnnotation(id) {
+      this.$store.commit('selectAnnotation', id);
+    },
     newAnnotation(a) {
       this.$store.commit('addAnnotation', {
         description: a.description,
