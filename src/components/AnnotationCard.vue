@@ -62,8 +62,16 @@
     </v-layout>
     <v-divider></v-divider>
     <v-card-actions>
-      <v-btn flat icon><v-icon>thumb_up</v-icon></v-btn>
-      <v-btn flat icon><v-icon>notifications</v-icon></v-btn>
+      <v-btn flat :color="annotation.liked ? 'primary': ''" @click.stop="toggleLike">
+        {{ annotation.upvotes }}
+        <v-icon right>thumb_up</v-icon>
+      </v-btn>
+      <v-btn flat icon :color="annotation.favorite ? 'primary': ''" @click.stop="toggleFav">
+        <v-icon>{{ annotation.favorite ? 'notifications_active': 'notifications' }}</v-icon>
+      </v-btn>
+      <v-btn flat icon>
+        <v-icon>share</v-icon>
+      </v-btn>
       <v-spacer></v-spacer>
       <v-btn flat>Bearbeiten</v-btn>
       <v-btn flat @click="deleteAnnotation">Löschen</v-btn>
@@ -99,6 +107,12 @@ export default {
   methods: {
     deleteAnnotation() {
       this.$store.commit('deleteAnnotation', this.annotation.id);
+    },
+    toggleLike() {
+      this.$store.commit('like', this.annotation.id);
+    },
+    toggleFav() {
+      this.$store.commit('fav', this.annotation.id);
     },
   },
 };

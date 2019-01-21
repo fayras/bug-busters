@@ -22,7 +22,7 @@
               </v-list-tile-action>
               <v-list-tile-action style="min-width: 32px;">
                 <v-btn flat icon :color="a.favorite ? 'primary': ''" @click.stop="toggleFav(a)">
-                  <v-icon>notifications</v-icon>
+                  <v-icon>{{ a.favorite ? 'notifications_active': 'notifications' }}</v-icon>
                 </v-btn>
               </v-list-tile-action>
             </v-list-tile>
