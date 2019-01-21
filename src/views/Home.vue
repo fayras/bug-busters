@@ -2,8 +2,8 @@
   <div class="home" style="height: 100%">
     <portal to="drawer">
       <v-tabs grow>
-        <v-tab>Annotationen</v-tab>
-        <v-tab>Historie</v-tab>
+        <v-tab>Offen</v-tab>
+        <v-tab>Erledigt</v-tab>
         <v-tab-item>
           <v-list three-line>
             <v-list-tile

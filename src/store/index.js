@@ -27,7 +27,7 @@ const store = new Vuex.Store({
         floor: 'ib02',
         room: '610',
         priority: false,
-        created_at: new Date(),
+        created_at: new Date(2019, 0, 10, 12, 50),
         created_by: 'Klaus',
         // open, claimed, done
         status: 'open',
@@ -146,6 +146,15 @@ const store = new Vuex.Store({
     },
     byRoom(state) {
       return (floor, room) => state.annotations.filter(a => a.floor === floor && a.room === room);
+    },
+    userIsWorker(state) {
+      return state.currentUser.type === 'worker';
+    },
+    userIsVip(state) {
+      return state.currentUser.type === 'vip';
+    },
+    userIsStandard(state) {
+      return state.currentUser.type === 'standard';
     },
   },
   actions: {},

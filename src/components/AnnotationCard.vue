@@ -26,7 +26,9 @@
                     </v-flex>
                     <v-flex xs12>
                       <span class="body-1 grey--text text--lighten-1">
-                        Eingestellt von {{ annotation.created_by }} {{ annotation.created_at }}
+                        Eingestellt{{
+                          $store.getters.userIsWorker ? ` von ${annotation.created_by}` : ''
+                        }} {{ formatedDate }}
                       </span>
                     </v-flex>
                     <v-flex xs12>
@@ -81,6 +83,8 @@
 </template>
 
 <script>
+import moment from 'moment';
+
 export default {
   name: 'AnnotationCard',
   data() {
@@ -101,6 +105,10 @@ export default {
 
     annotation() {
       return this.$store.getters.selectedAnnotation || {};
+    },
+
+    formatedDate() {
+      return moment(this.annotation.created_at).locale('de').fromNow();
     },
   },
 
