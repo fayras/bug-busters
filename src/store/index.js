@@ -33,6 +33,7 @@ const store = new Vuex.Store({
         status: 'open',
         tags: 'test,asd,asd',
         img: '',
+        assigned_to: 'Klaus',
       }, {
         id: 2,
         description: 'Kaputt!',
@@ -47,6 +48,7 @@ const store = new Vuex.Store({
         status: 'open',
         tags: '',
         img: './img/chair.jpg',
+        assigned_to: undefined,
       }, {
         id: 3,
         description: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam',
@@ -61,6 +63,7 @@ const store = new Vuex.Store({
         status: 'open',
         tags: '',
         img: './img/chair.jpg',
+        assigned_to: undefined,
       }, {
         id: 4,
         description: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam',
@@ -76,6 +79,7 @@ const store = new Vuex.Store({
         tags: '',
         img: './img/chair.jpg',
         coords: [0.07192592322826385, 0.3394669005943769, -0.9322350293923343],
+        assigned_to: undefined,
       },
     ],
   },
@@ -131,6 +135,12 @@ const store = new Vuex.Store({
     selectAnnotation(state, id) {
       const s = state;
       s.selectedAnnotationId = id;
+    },
+    assign(state, id) {
+      const a = state.annotations.find(x => x.id === id);
+      if (a) {
+        a.assigned_to = state.currentUser.name;
+      }
     },
   },
   getters: {

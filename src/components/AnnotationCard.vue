@@ -81,8 +81,20 @@
         <v-icon>share</v-icon>
       </v-btn>
       <v-spacer></v-spacer>
-      <v-btn flat>Bearbeiten</v-btn>
-      <v-btn flat @click="deleteAnnotation">Löschen</v-btn>
+      <div v-if="$store.getters.userIsWorker">
+        <v-btn
+          v-if="!annotation.assigned_to"
+          flat @click="$store.commit('assign', annotation.id)"
+        >Sich selbst zuweisen</v-btn>
+        <v-btn
+          v-else
+          flat disabled
+        >Zugewiesen an {{ annotation.assigned_to }}</v-btn>
+      </div>
+      <div v-else>
+        <v-btn flat>Bearbeiten</v-btn>
+        <v-btn flat @click="deleteAnnotation">Löschen</v-btn>
+      </div>
     </v-card-actions>
   </v-card>
 </v-dialog>
