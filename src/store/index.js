@@ -12,6 +12,7 @@ const store = new Vuex.Store({
   state: {
     currentUser: {
       name: 'Santa',
+      type: 'standard',
     },
     currentFloor: 'ib02',
     currentRoom: undefined,
@@ -79,6 +80,10 @@ const store = new Vuex.Store({
     ],
   },
   mutations: {
+    setUser(s, user) {
+      const state = s;
+      state.currentUser = user;
+    },
     like(state, id) {
       const a = state.annotations.find(x => x.id === id);
       if (a) {

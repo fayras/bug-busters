@@ -7,12 +7,13 @@
       <v-navigation-drawer v-model="drawer" app right :stateless="true">
         <portal-target name="drawer"></portal-target>
       </v-navigation-drawer>
-      <v-toolbar dark app>
+      <v-toolbar dark app v-if="$route.name !== 'login'">
         <v-toolbar-side-icon></v-toolbar-side-icon>
         <v-toolbar-title>BugBusters</v-toolbar-title>
-        <v-btn flat>
-          Home
+        <v-btn flat @click="$router.push({ name: 'login' })">
+          Login
         </v-btn>
+        <div>{{ loggedInAs }}</div>
         <v-spacer></v-spacer>
         <v-autocomplete
           style="max-width:200px"
@@ -72,6 +73,17 @@ export default {
         this.$store.commit('setFloor', floor);
       },
     },
+    loggedInAs() {
+      let type = '';
+      if (this.$store.state.currentUser.type === 'vip') {
+        type = 'VIP Melder';
+      } else if (this.$store.state.currentUser.type === 'standard') {
+        type = 'Melder';
+      } else if (this.$store.state.currentUser.type === 'worker') {
+        type = 'Bearbeiter';
+      }
+      return `Eingeloggt als ${this.$store.state.currentUser.name} (${type})`;
+    },
   },
 };
 </script>
@@ -82,8 +94,6 @@ export default {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
 }
 
 .leaflet-control-zoom-in, .leaflet-control-zoom-out {
