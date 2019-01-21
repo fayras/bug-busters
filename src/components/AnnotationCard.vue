@@ -31,8 +31,14 @@
                         }} {{ formatedDate }}
                       </span>
                     </v-flex>
-                    <v-flex xs12>
-                      <span class="body-1 grey--text text--lighten-1">{{ annotation.tags }}</span>
+                    <v-flex xs12 v-if="annotation.tags">
+                      <span
+                        v-for="(tag, index) in annotation.tags.split(',')"
+                        :key="index"
+                        class="body-1 grey--text text--lighten-1"
+                      >
+                        <a style="margin-right: 10px">{{ `#${tag.trim()}` }}</a>
+                      </span>
                     </v-flex>
                   </v-layout>
                 </v-flex>

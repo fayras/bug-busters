@@ -111,6 +111,7 @@ const store = new Vuex.Store({
         status: 'open',
         created_by: state.currentUser.name,
         coords: a.coords,
+        tags: a.tags,
       });
     },
     deleteAnnotation(state, id) {
