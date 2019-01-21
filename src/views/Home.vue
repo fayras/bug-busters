@@ -58,6 +58,21 @@
         :optionsStyle="style"
         :options="{ onEachFeature: onEachFeature }"
       ></l-geo-json>
+      <l-marker
+        v-for="d in geoData.features"
+        :key="d.properties.id"
+        :lat-lng="d.properties.badge"
+      >
+        <l-icon class-name="someExtraClass">
+          <v-badge left :color="getColor(getCountForBadge(d.properties.floor, d.properties.room))">
+            <span slot="badge" :style="{
+              color: getCountForBadge(d.properties.floor, d.properties.room) > 6 ? 'white' : 'black'
+            }">
+              {{ getCountForBadge(d.properties.floor, d.properties.room) }}
+            </span>
+          </v-badge>
+        </l-icon>
+      </l-marker>
     </l-map>
   </div>
 </template>
@@ -146,10 +161,13 @@ export default {
       if (d > 500) return '#BD0026';
       if (d > 9) return '#E31A1C';
       if (d > 8) return '#FC4E2A';
-      if (d > 7) return '#FD8D3C';
-      if (d > 6) return '#FEB24C';
-      if (d > 5) return '#FED976';
+      if (d > 6) return '#FD8D3C';
+      if (d > 3) return '#FEB24C';
+      if (d > 1) return '#FED976';
       return '#cce187';
+    },
+    getCountForBadge(floor, room) {
+      return this.$store.getters.byRoom(floor, room).length;
     },
     style(feature) {
       let color;

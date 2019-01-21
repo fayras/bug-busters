@@ -4,7 +4,7 @@ export default {
     {
       type: 'Feature',
       properties: {
-        id: 'ib02_608', floor: 'ib02', room: '608',
+        id: 'ib02_608', floor: 'ib02', room: '608', badge: [1399 + 92, 899 + 200],
       },
       geometry: {
         type: 'Polygon',
@@ -19,7 +19,7 @@ export default {
     {
       type: 'Feature',
       properties: {
-        id: 'ib02_610', floor: 'ib02', room: '610',
+        id: 'ib02_610', floor: 'ib02', room: '610', badge: [1399 + 92, 1123 + 200],
       },
       geometry: {
         type: 'Polygon',
@@ -34,7 +34,7 @@ export default {
     {
       type: 'Feature',
       properties: {
-        id: 'ib02_674', floor: 'ib02', room: '674',
+        id: 'ib02_674', floor: 'ib02', room: '674', badge: [1237 + 92, 1123 + 200],
       },
       geometry: {
         type: 'Polygon',
@@ -49,7 +49,7 @@ export default {
     {
       type: 'Feature',
       properties: {
-        id: 'ib02_hib', floor: 'ib02', room: 'hib', // oder HIB umwandeln in Nummer ?
+        id: 'ib02_hib', floor: 'ib02', room: 'hib', badge: [1289 + 92, 1696 + 200],
       },
       geometry: {
         type: 'Polygon',

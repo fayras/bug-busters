@@ -4,7 +4,7 @@ import PortalVue from 'portal-vue';
 import 'vuetify/dist/vuetify.min.css'; // Vuesax styles
 
 import {
-  L, LMap, LTileLayer, LMarker, LImageOverlay, LGeoJson, LControl, LControlZoom,
+  L, LMap, LTileLayer, LMarker, LImageOverlay, LGeoJson, LControl, LControlZoom, LIcon,
 } from 'vue2-leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -21,6 +21,7 @@ Vue.component('l-marker', LMarker);
 Vue.component('l-geo-json', LGeoJson);
 Vue.component('l-control', LControl);
 Vue.component('l-control-zoom', LControlZoom);
+Vue.component('l-icon', LIcon);
 
 Vue.use(Vuetify);
 Vue.use(PortalVue);
