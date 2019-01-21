@@ -108,6 +108,12 @@ const store = new Vuex.Store({
         coords: a.coords,
       });
     },
+    deleteAnnotation(state, id) {
+      const index = state.annotations.findIndex(x => x.id === id);
+      if (index !== -1) {
+        state.annotations.splice(index, 1);
+      }
+    },
     setFloor(state, floor) {
       const s = state;
       s.currentFloor = floor;

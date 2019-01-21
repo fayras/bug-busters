@@ -62,10 +62,11 @@
     </v-layout>
     <v-divider></v-divider>
     <v-card-actions>
-      <v-btn flat icon><v-icon>notifications</v-icon></v-btn>
       <v-btn flat icon><v-icon>thumb_up</v-icon></v-btn>
+      <v-btn flat icon><v-icon>notifications</v-icon></v-btn>
       <v-spacer></v-spacer>
-      <v-btn flat color="primary">Blabla</v-btn>
+      <v-btn flat>Bearbeiten</v-btn>
+      <v-btn flat @click="deleteAnnotation">Löschen</v-btn>
     </v-card-actions>
   </v-card>
 </v-dialog>
@@ -92,6 +93,12 @@ export default {
 
     annotation() {
       return this.$store.getters.selectedAnnotation || {};
+    },
+  },
+
+  methods: {
+    deleteAnnotation() {
+      this.$store.commit('deleteAnnotation', this.annotation.id);
     },
   },
 };
