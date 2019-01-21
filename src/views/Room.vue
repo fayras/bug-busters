@@ -1,5 +1,8 @@
 <template>
   <div id="container" class="about">
+    <v-dialog v-model="showDialog" max-width="600px">
+      <new-annotation-card @save="createAnnotation"></new-annotation-card>
+    </v-dialog>
     <div ref="container" class="canvas-container">
       <div
         v-for="a in annotationsWithCoords"
@@ -21,10 +24,12 @@
 <script>
 import Vue from 'vue';
 import Room3D from '@/components/Room3D';
+import NewAnnotationCard from '@/components/NewAnnotationCard.vue';
 // https://threejs.org/docs/#manual/en/introduction/Loading-3D-models
 
 export default {
   name: 'Room',
+  components: { NewAnnotationCard },
   props: {
     id: String,
   },
@@ -32,6 +37,8 @@ export default {
     return {
       room: null,
       coords: {},
+      showDialog: false,
+      currentIntersect: null,
     };
   },
   computed: {
@@ -65,7 +72,7 @@ export default {
   },
   mounted() {
     this.room = new Room3D(this.$refs.canvas, this.$refs.container);
-    this.room.onClick(intersect => console.log(intersect));
+    this.room.onClick(intersect => this.addAnnotation(intersect));
     this.room.onCameraChange(() => this.onCameraChange());
     this.$nextTick(() => {
       this.room.handleResize();
@@ -76,6 +83,21 @@ export default {
     this.room.destroy();
   },
   methods: {
+    addAnnotation(intersect) {
+      this.currentIntersect = intersect;
+      this.showDialog = true;
+    },
+    createAnnotation(annotation) {
+      const p = this.currentIntersect.point;
+      this.$store.commit('addAnnotation', {
+        description: annotation.description,
+        priority: annotation.priority,
+        tags: annotation.tags,
+        coords: [p.x, p.y, p.z],
+      });
+      this.showDialog = false;
+      this.currentIntersect = null;
+    },
     onCameraChange() {
       console.log('onCameraChange');
       for (let i = 0; i < this.annotationsWithCoords.length; i += 1) {

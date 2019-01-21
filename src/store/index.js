@@ -105,6 +105,7 @@ const store = new Vuex.Store({
         created_at: new Date(),
         status: 'open',
         created_by: state.currentUser.name,
+        coords: a.coords,
       });
     },
     setFloor(state, floor) {
