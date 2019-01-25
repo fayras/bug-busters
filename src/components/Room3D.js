@@ -39,7 +39,7 @@ export default class Room3D {
   }
 
   loadRoom() {
-    this.gltfLoader.load('/models/test/test_env.gltf', (gltf) => {
+    this.gltfLoader.load('/models/saal/Saal.gltf', (gltf) => {
       this.scene.add(gltf.scene);
     }, undefined, (error) => {
       console.error(error);
@@ -76,7 +76,7 @@ export default class Room3D {
     var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
     this.scene.add( directionalLight );
 
-    this.camera.position.z = 1;
+    this.camera.position.z = 20;
     this.camera.position.x = 0;
     this.camera.position.y = 0;
   }
