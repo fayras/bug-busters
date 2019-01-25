@@ -10,6 +10,7 @@
               v-for="a in annotations"
               :key="a.id"
               @click="() => selectAnnotation(a.id)"
+              :class="a.priority ? 'vip' : ''"
             >
               <v-list-tile-content>
                 <v-list-tile-title>{{ a.description }}</v-list-tile-title>
@@ -261,5 +262,9 @@ export default {
 <style scoped>
 .leaflet-container {
   background-color: #2f3b39;
+}
+
+.vip {
+  border-left: 5px solid #FFC107;
 }
 </style>

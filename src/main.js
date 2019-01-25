@@ -23,7 +23,12 @@ Vue.component('l-control', LControl);
 Vue.component('l-control-zoom', LControlZoom);
 Vue.component('l-icon', LIcon);
 
-Vue.use(Vuetify);
+Vue.use(Vuetify, {
+  theme: {
+    primary: '#FF9800', // '#FB8C00',
+    secondary: '#33691E',
+  },
+});
 Vue.use(PortalVue);
 
 /* eslint-disable */

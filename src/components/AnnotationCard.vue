@@ -21,8 +21,17 @@
                 <v-flex xs12 style="flex-basis:auto"></v-flex>
                 <v-flex d-flex xs12 style="flex-basis:auto">
                   <v-layout column>
-                    <v-flex xs12>
-                      <v-checkbox label="In der Priorität hochstufen"></v-checkbox>
+                    <v-flex
+                      xs12
+                      v-if="annotation.priority"
+                      d-flex
+                      style="text-align: justify;flex:0 1 auto;padding-bottom:5px"
+                    >
+                      <v-icon
+                        color="amber"
+                        style="flex-grow:0 !important;padding-right:4px"
+                      >star</v-icon>
+                      <div>Priorität</div>
                     </v-flex>
                     <v-flex xs12>
                       <span class="body-1 grey--text text--lighten-1">
