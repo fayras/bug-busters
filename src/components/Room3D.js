@@ -7,6 +7,8 @@ export default class Room3D {
     this.container = container;
     this.mouse = new THREE.Vector2();
     this.intersected = null;
+    this.clicked = false;
+    this.draggingCamera = false;
 
     const { width, height } = canvas;
 
@@ -21,6 +23,7 @@ export default class Room3D {
       stencil: false,
       alpha: !true,
     });
+    this.renderer.shadowMap.enabled = true
     this.renderer.setClearColor(0x303030, 1);
     this.renderer.setPixelRatio(window.devicePixelRatio || 1);
     this.running = true;
@@ -28,6 +31,7 @@ export default class Room3D {
     this.gltfLoader = new THREE.GLTFLoader();
     this.raycaster = new THREE.Raycaster();
     this.canvas.addEventListener( 'mousemove', this.onDocumentMouseMove.bind(this), false );
+    this.canvas.addEventListener( 'mousedown', this.onMouseDown.bind(this) );
     this.canvas.addEventListener( 'click', this.onClickHandler.bind(this) );
 
     this.setup();
@@ -40,6 +44,12 @@ export default class Room3D {
 
   loadRoom() {
     this.gltfLoader.load('/models/saal/Saal.gltf', (gltf) => {
+      gltf.scene.traverse( function( node ) {
+        if(node.isMesh) {
+          node.castShadow = true;
+          node.receiveShadow = true;
+        }
+      } );
       this.scene.add(gltf.scene);
     }, undefined, (error) => {
       console.error(error);
@@ -49,6 +59,7 @@ export default class Room3D {
   destroy() {
     this.running = false;
     this.canvas.removeEventListener('mousemove', this.onDocumentMouseMove.bind(this));
+    this.canvas.removeEventListener('mousedown', this.onMouseDown.bind(this));
     this.canvas.removeEventListener('click', this.onClickHandler.bind(this));
     while (this.scene.children.length > 0) {
       const object = this.scene.children[this.scene.children.length - 1];
@@ -75,6 +86,25 @@ export default class Room3D {
 
     var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
     this.scene.add( directionalLight );
+
+    var light2 = new THREE.PointLight( 0xffffff, 0.8, 500 );
+    light2.castShadow = true;
+    light2.position.set( 3, 7, 5 );
+    this.scene.add( light2 );
+    //var sphereSize = 1;
+    //var pointLightHelper = new THREE.PointLightHelper( light2, sphereSize );
+    //this.scene.add( pointLightHelper );
+
+    const light3 = new THREE.DirectionalLight(0xffffff, 5);
+    light3.position.set(-5, 10, 10);
+    light3.castShadow = true;
+    light3.shadow.camera.top = 180;
+    light3.shadow.camera.bottom = -100;
+    light3.shadow.camera.left = -120;
+    light3.shadow.camera.right = 120;
+    // this.scene.add(light3);
+    //var light3helper = new THREE.DirectionalLightHelper( light3, 5 );
+    //this.scene.add( light3helper );
 
     this.camera.position.z = 20;
     this.camera.position.x = 0;
@@ -123,12 +153,22 @@ export default class Room3D {
     event.preventDefault();
     this.mouse.x = ((event.offsetX - this.renderer.domElement.offsetLeft) / this.renderer.domElement.width) * 2 - 1;
     this.mouse.y = -((event.offsetY - this.renderer.domElement.offsetTop) / this.renderer.domElement.height) * 2 + 1;
+
+    if(this.clicked) this.draggingCamera = true
+  }
+
+  onMouseDown() {
+    this.clicked = true
   }
 
   onClickHandler(event) {
-    if(this.onClickCallback && this.intersected) {
-      this.onClickCallback(this.intersected);
+    if(!this.draggingCamera) {
+      if(this.onClickCallback && this.intersected) {
+        this.onClickCallback(this.intersected);
+      }
     }
+    this.draggingCamera = false
+    this.clicked = false
   }
 
   onClick(func) {
