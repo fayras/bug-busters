@@ -23,10 +23,28 @@ export default class Room3D {
       stencil: false,
       alpha: !true,
     });
-    this.renderer.shadowMap.enabled = true
+    this.renderer.gammaOutput = true;
     this.renderer.setClearColor(0x303030, 1);
     this.renderer.setPixelRatio(window.devicePixelRatio || 1);
     this.running = true;
+
+    this.composer = new THREE.EffectComposer( this.renderer );
+    var renderPass = new THREE.RenderPass( this.scene, this.camera );
+    this.composer.addPass( renderPass );
+
+    this.outlinePass = new THREE.OutlinePass( new THREE.Vector2(width, height), this.scene, this.camera );
+    this.outlinePass.edgeStrength = 6.0
+    this.outlinePass.edgeThickness = 1.0
+    this.outlinePass.visibleEdgeColor.set('#ffffff')
+    this.outlinePass.hiddenEdgeColor.set('#ffffff')
+
+    // this.outlinePass.renderToScreen = true;
+    this.composer.addPass( this.outlinePass );
+
+    this.effectFXAA = new THREE.ShaderPass( THREE.FXAAShader );
+		this.effectFXAA.uniforms[ 'resolution' ].value.set( 1 / width, 1 / height );
+		this.effectFXAA.renderToScreen = true;
+		this.composer.addPass( this.effectFXAA );
 
     this.gltfLoader = new THREE.GLTFLoader();
     this.raycaster = new THREE.Raycaster();
@@ -44,12 +62,12 @@ export default class Room3D {
 
   loadRoom() {
     this.gltfLoader.load('/models/saal/Saal.gltf', (gltf) => {
-      gltf.scene.traverse( function( node ) {
-        if(node.isMesh) {
-          node.castShadow = true;
-          node.receiveShadow = true;
-        }
-      } );
+      // gltf.scene.traverse( function( node ) {
+      //   if(node.isMesh) {
+      //     node.castShadow = true;
+      //     node.receiveShadow = true;
+      //   }
+      // } );
       this.scene.add(gltf.scene);
     }, undefined, (error) => {
       console.error(error);
@@ -81,28 +99,22 @@ export default class Room3D {
     const cube = new THREE.Mesh(geometry, material);
     // this.scene.add(cube);
 
-    var light = new THREE.AmbientLight( 0x404040, 5 ); // soft white light
+    var light = new THREE.AmbientLight( 0x404040, 2 ); // soft white light
     this.scene.add( light );
 
-    var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+    var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.7 );
     this.scene.add( directionalLight );
 
     var light2 = new THREE.PointLight( 0xffffff, 0.8, 500 );
-    light2.castShadow = true;
     light2.position.set( 3, 7, 5 );
     this.scene.add( light2 );
     //var sphereSize = 1;
     //var pointLightHelper = new THREE.PointLightHelper( light2, sphereSize );
     //this.scene.add( pointLightHelper );
 
-    const light3 = new THREE.DirectionalLight(0xffffff, 5);
+    const light3 = new THREE.DirectionalLight(0xffffff, 0.5);
     light3.position.set(-5, 10, 10);
-    light3.castShadow = true;
-    light3.shadow.camera.top = 180;
-    light3.shadow.camera.bottom = -100;
-    light3.shadow.camera.left = -120;
-    light3.shadow.camera.right = 120;
-    // this.scene.add(light3);
+    this.scene.add(light3);
     //var light3helper = new THREE.DirectionalLightHelper( light3, 5 );
     //this.scene.add( light3helper );
 
@@ -120,23 +132,23 @@ export default class Room3D {
     }
     // const time = performance.now();
     // this.animation.update(time * 0.007);
-    this.renderer.render(this.scene, this.camera);
+    this.composer.render();
+    //this.renderer.render(this.scene, this.camera);
   }
 
   render() {
     this.raycaster.setFromCamera(this.mouse, this.camera);
     const intersects = this.raycaster.intersectObjects(this.scene.children, true);
+
     if (intersects.length > 0) {
-      if (this.intersected) this.intersected.point = intersects[0].point
-      if (this.intersected != intersects[0].object) {
-        if (this.intersected) this.intersected.material.emissive.setHex(this.intersected.currentHex);
-        this.intersected = intersects[0].object;
-        this.intersected.currentHex = this.intersected.material.emissive.getHex();
-        this.intersected.material.emissive.setHex(0xff0000);
-      }
+      var selectedObject = intersects[ 0 ].object;
+      this.intersected = selectedObject
+      this.intersected.point = intersects[0].point
+
+      this.outlinePass.selectedObjects = [selectedObject];
     } else {
-      if (this.intersected) this.intersected.material.emissive.setHex(this.intersected.currentHex);
-      this.intersected = null;
+      this.outlinePass.selectedObjects = [];
+      this.intersected = null
     }
   }
 
@@ -145,6 +157,8 @@ export default class Room3D {
     this.canvas.width = width;
     this.canvas.height = height;
     this.renderer.setSize(width, height);
+    this.composer.setSize( width, height );
+		this.effectFXAA.uniforms[ 'resolution' ].value.set( 1 / width, 1 / height );
     this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
   }
