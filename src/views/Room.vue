@@ -7,7 +7,7 @@
       <div
         v-for="a in annotationsWithCoords"
         :key="a.id"
-        class="annotation"
+        :class="{ annotation: true, transparent: coords[a.id] && coords[a.id].opacity < 1}"
         :style="!coords[a.id] ? {} : {
           top: coords[a.id].top,
           left: coords[a.id].left,
@@ -106,6 +106,7 @@ export default {
 
         const vector = annotation.coords.clone();
         const canvas = this.room.renderer.domElement;
+        const length = this.room.camera.position.distanceTo(vector);
 
         // const meshDistance = camera.position.distanceTo(mesh.position);
         // const spriteDistance = camera.position.distanceTo(vector);
@@ -116,10 +117,13 @@ export default {
         vector.x = Math.round((0.5 + vector.x / 2) * (canvas.width / window.devicePixelRatio));
         vector.y = Math.round((0.5 - vector.y / 2) * (canvas.height / window.devicePixelRatio));
 
+        const point = this.room.get3dPoint(vector.x, vector.y);
+        const length2 = this.room.camera.position.distanceTo(point);
+
         Vue.set(this.coords, annotation.id, {
           top: `${vector.y}px`,
           left: `${vector.x}px`,
-          opacity: 1,
+          opacity: length - length2 > 0.1 ? 0.5 : 1,
         });
       }
     },
@@ -160,6 +164,13 @@ export default {
     font-size: 12px;
     line-height: 1.2;
     transition: opacity .5s;
+    pointer-events: none;
+}
+
+.transparent {
+  width: 0px;
+  padding: 0px;
+  color: transparent;
 }
 
 .annotation::before {

@@ -10,6 +10,9 @@ export default class Room3D {
     this.clicked = false;
     this.draggingCamera = false;
 
+    this.depthMaterial =  new THREE.MeshDepthMaterial({ depthPacking: THREE.RGBADepthPacking });
+    this.depthTarget = new THREE.WebGLRenderTarget(width, height);
+
     const { width, height } = canvas;
 
     this.clock = new THREE.Clock();
@@ -58,6 +61,72 @@ export default class Room3D {
 
     this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
     this.controls.maxDistance = 1500;
+
+    this._getDepth = (() => {
+      const rgbaBuffer = new Uint8Array(4);
+      const v4 = new THREE.Vector4();
+
+      const unpackDownscale = 255 / 256;
+      const unpackFactors = new THREE.Vector4(
+          unpackDownscale / (256 * 256 * 256),
+          unpackDownscale / (256 * 256),
+          unpackDownscale / 256,
+          unpackDownscale
+      );
+
+      function unpackRGBAToDepth(buffer) {
+        return v4.fromArray(buffer).multiplyScalar(1 / 255).dot(unpackFactors);
+      }
+
+      function unpackDepth(
+          rgbaBuffer,
+          cameraNear,
+          cameraFar,
+          logarithmicDepthBuffer = false
+      ) {
+        if (!logarithmicDepthBuffer) {
+          return unpackRGBAToDepth(rgbaBuffer);
+        }
+
+        const logDepthBufFC = 2.0 / (Math.log(cameraFar + 1.0) / Math.LN2);
+        const logz = unpackRGBAToDepth(rgbaBuffer);
+        const w = Math.pow(2.0, logz / logDepthBufFC) - 1.0;
+
+        return logz / w + 1.0;
+      }
+
+      return (x, y) => {
+        this.renderer.readRenderTargetPixels(this.depthTarget, x, y, 1, 1, rgbaBuffer);
+
+        return unpackDepth(
+            rgbaBuffer,
+            this.camera.near,
+            this.camera.far,
+            this.renderer.capabilities.logarithmicDepthBuffer
+        );
+      };
+    })();
+
+    this._setPositionFromViewZ = (() => {
+      const projInv = new THREE.Matrix4();
+
+      return (viewZ, x, y) => {
+        const position = new THREE.Vector3();
+        projInv.getInverse(this.camera.projectionMatrix);
+        position
+            .set(
+                x / (this.canvas.width / window.devicePixelRatio) * 2 - 1,
+                -(y / (this.canvas.height / window.devicePixelRatio)) * 2 + 1,
+                0.5
+            )
+            .applyMatrix4(projInv);
+
+        position.multiplyScalar(viewZ / position.z);
+        position.applyMatrix4(this.camera.matrixWorld);
+
+        return position
+      };
+    }) ()
   }
 
   loadRoom() {
@@ -136,6 +205,10 @@ export default class Room3D {
     }
     // const time = performance.now();
     // this.animation.update(time * 0.007);
+    this.scene.overrideMaterial = this.depthMaterial;
+    this.renderer.render(this.scene, this.camera, this.depthTarget);
+    this.scene.overrideMaterial = null;
+
     this.composer.render();
     //this.renderer.render(this.scene, this.camera);
   }
@@ -161,6 +234,7 @@ export default class Room3D {
     this.canvas.width = width;
     this.canvas.height = height;
     this.renderer.setSize(width, height);
+    this.depthTarget.setSize(width, height);
     this.composer.setSize( width, height );
 		this.effectFXAA.uniforms[ 'resolution' ].value.set( 1 / width, 1 / height );
     this.camera.aspect = width / height;
@@ -199,5 +273,17 @@ export default class Room3D {
 
   onCameraChange(func) {
     this.controls.addEventListener('change', () => func());
+  }
+
+  perspectiveDepthToViewZ(invClipZ, near, far) {
+    return (near * far) / ((far - near) * invClipZ - far);
+  }
+
+  get3dPoint(x, y) {
+    const depth = this._getDepth(x, this.canvas.height - y);
+    const viewZ = this.perspectiveDepthToViewZ(depth, this.camera.near, this.camera.far);
+
+    // setPositionFromDepth(depth, cursor.position);
+    return this._setPositionFromViewZ(viewZ, x, y);
   }
 }
