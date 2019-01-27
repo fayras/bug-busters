@@ -61,16 +61,20 @@ export default class Room3D {
   }
 
   loadRoom() {
-    this.gltfLoader.load('/models/saal/Saal.gltf', (gltf) => {
-      // gltf.scene.traverse( function( node ) {
-      //   if(node.isMesh) {
-      //     node.castShadow = true;
-      //     node.receiveShadow = true;
-      //   }
-      // } );
-      this.scene.add(gltf.scene);
-    }, undefined, (error) => {
-      console.error(error);
+    return new Promise((resolve, reject) => {
+      this.gltfLoader.load('/models/saal/Saal.gltf', (gltf) => {
+        // gltf.scene.traverse( function( node ) {
+        //   if(node.isMesh) {
+        //     node.castShadow = true;
+        //     node.receiveShadow = true;
+        //   }
+        // } );
+        this.scene.add(gltf.scene);
+        resolve();
+      }, undefined, (error) => {
+        console.error(error);
+        reject(error);
+      });
     });
   }
 

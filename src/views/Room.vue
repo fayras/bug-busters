@@ -74,9 +74,10 @@ export default {
     this.room = new Room3D(this.$refs.canvas, this.$refs.container);
     this.room.onClick(intersect => this.addAnnotation(intersect));
     this.room.onCameraChange(() => this.onCameraChange());
-    this.$nextTick(() => {
+    this.$nextTick(async () => {
       this.room.handleResize();
-      this.room.loadRoom();
+      await this.room.loadRoom();
+      this.onCameraChange();
     });
   },
   beforeDestroy() {
