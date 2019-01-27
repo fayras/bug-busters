@@ -4,4 +4,5 @@ module.exports = {
   },
   productionSourceMap: false,
   lintOnSave: undefined,
+  publicPath: '/bug-busters/',
 };
