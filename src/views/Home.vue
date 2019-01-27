@@ -243,14 +243,14 @@ export default {
     loadRoom(e) {
       const { room } = e.target.feature.properties;
       this.$store.commit('ui/showDrawer', false);
-      this.$nextTick(() => {
+      setTimeout(() => {
         this.$router.push({
           name: 'room',
           params: {
             id: room,
           },
         });
-      });
+      }, 300);
     },
     formatDate(d) {
       return moment(d).locale('de').format('L LT');
