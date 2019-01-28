@@ -56,22 +56,29 @@
           </v-tab-item>
           <v-tab-item>
             <v-card-text class="text-xs-left">
-              <v-card flat @click="() => {}">
+              <v-card flat v-for="comment in comments" :key="comment.id">
                 <v-card-title primary-title class="zero-padding" style="margin-bottom: 5px">
                   <v-layout row wrap align-center>
                     <v-avatar size="36" color="indigo">
                       <v-icon dark>account_circle</v-icon>
                     </v-avatar>
                     <div style="margin-left: 15px">
-                      <h3 style="margin-bottom: -5px">Test</h3>
+                      <h3 style="margin-bottom: -5px">{{comment.user}}</h3>
                       <span class="caption grey--text text--darken-1">vor 19 Stunden</span>
                     </div>
                   </v-layout>
                 </v-card-title>
                 <v-card-text class="zero-padding">
-                  asdhasl dashdialusduhasid lasdas ldasgd asld asd
+                  {{comment.message}}
                 </v-card-text>
+                <v-divider></v-divider>
               </v-card>
+              <v-text-field box
+                v-model="commentMessage"
+                placeholder="Kommentar verfassen..."
+                append-icon="send"
+                @click:append="addComment"
+              ></v-text-field>
             </v-card-text>
           </v-tab-item>
         </v-tabs>
@@ -116,7 +123,7 @@ export default {
   name: 'AnnotationCard',
   data() {
     return {
-
+      commentMessage: '',
     };
   },
 
@@ -134,12 +141,23 @@ export default {
       return this.$store.getters.selectedAnnotation || {};
     },
 
+    comments() {
+      return this.annotation.comments || [];
+    },
+
     formatedDate() {
       return moment(this.annotation.created_at).locale('de').fromNow();
     },
   },
 
   methods: {
+    addComment() {
+      this.$store.commit('addComment', {
+        id: this.annotation.id,
+        message: this.commentMessage,
+      });
+      this.commentMessage = '';
+    },
     deleteAnnotation() {
       this.$store.commit('deleteAnnotation', this.annotation.id);
     },

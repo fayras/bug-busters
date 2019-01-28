@@ -25,7 +25,7 @@ const store = new Vuex.Store({
         liked: false,
         favorite: false,
         floor: 'ib02',
-        room: '610',
+        room: 'hib',
         priority: false,
         created_at: new Date(2019, 0, 10, 12, 50),
         created_by: 'Klaus',
@@ -34,6 +34,12 @@ const store = new Vuex.Store({
         tags: 'test,asd,asd',
         img: '',
         assigned_to: 'Klaus',
+        comments: [{
+          id: 1,
+          user: 'test',
+          message: 'Testtesttest',
+          date: new Date(2019, 0, 10, 12, 50),
+        }],
       }, {
         id: 2,
         description: 'Kaputt!',
@@ -41,7 +47,7 @@ const store = new Vuex.Store({
         liked: true,
         favorite: false,
         floor: 'ib02',
-        room: '610',
+        room: 'hib',
         priority: true,
         created_at: new Date(),
         created_by: 'Klaus',
@@ -49,6 +55,7 @@ const store = new Vuex.Store({
         tags: '',
         img: './img/chair.jpg',
         assigned_to: undefined,
+        comments: [],
       }, {
         id: 3,
         description: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam',
@@ -56,7 +63,7 @@ const store = new Vuex.Store({
         liked: true,
         favorite: true,
         floor: 'ib02',
-        room: '610',
+        room: 'hib',
         priority: false,
         created_at: new Date(),
         created_by: 'Klaus',
@@ -64,6 +71,24 @@ const store = new Vuex.Store({
         tags: '',
         img: './img/chair.jpg',
         assigned_to: undefined,
+        comments: [],
+      }, {
+        id: 4,
+        description: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam',
+        upvotes: 4,
+        liked: true,
+        favorite: true,
+        floor: 'ib02',
+        room: 'hib',
+        priority: false,
+        created_at: new Date(),
+        created_by: 'Klaus',
+        status: 'open',
+        tags: '',
+        img: './img/chair.jpg',
+        coords: [0.07192592322826385, 0.3394669005943769, -0.9322350293923343],
+        assigned_to: undefined,
+        comments: [],
       }, {
         id: 4,
         description: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam',
@@ -80,6 +105,7 @@ const store = new Vuex.Store({
         img: './img/chair.jpg',
         coords: [0.07192592322826385, 0.3394669005943769, -0.9322350293923343],
         assigned_to: undefined,
+        comments: [],
       },
     ],
   },
@@ -101,6 +127,17 @@ const store = new Vuex.Store({
         a.favorite = !a.favorite;
       }
     },
+    addComment(state, annotation) {
+      const a = state.annotations.find(x => x.id === annotation.id);
+      if (a) {
+        a.comments.push({
+          id: (new Date()).valueOf(),
+          user: state.currentUser.name,
+          message: annotation.message,
+          date: new Date(),
+        });
+      }
+    },
     addAnnotation(state, a) {
       state.annotations.push({
         id: (new Date()).valueOf(),
@@ -116,6 +153,7 @@ const store = new Vuex.Store({
         created_by: state.currentUser.name,
         coords: a.coords,
         tags: a.tags,
+        comments: [],
       });
     },
     deleteAnnotation(state, id) {
