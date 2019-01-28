@@ -131,7 +131,7 @@ export default class Room3D {
 
   loadRoom() {
     return new Promise((resolve, reject) => {
-      this.gltfLoader.load('/bug-busters/models/saal/Saal.gltf', (gltf) => {
+      this.gltfLoader.load('/bug-busters/models/saal/Saal8.gltf', (gltf) => {
         // gltf.scene.traverse( function( node ) {
         //   if(node.isMesh) {
         //     node.castShadow = true;
