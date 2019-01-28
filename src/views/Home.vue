@@ -115,7 +115,14 @@ export default {
 
   computed: {
     annotations() {
-      return this.$store.getters.currentAnnotations;
+      return [...this.$store.getters.currentAnnotations].sort((a, b) => {
+        if (a.priority > b.priority) {
+          return -1;
+        } if (a.priority < b.priority) {
+          return 1;
+        } // keyA == keyB
+        return b.upvotes - a.upvotes;
+      });
     },
   },
 
