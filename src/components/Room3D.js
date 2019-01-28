@@ -191,9 +191,9 @@ export default class Room3D {
     //var light3helper = new THREE.DirectionalLightHelper( light3, 5 );
     //this.scene.add( light3helper );
 
-    this.camera.position.z = 20;
-    this.camera.position.x = 0;
-    this.camera.position.y = 0;
+    this.camera.position.z = -9;
+    this.camera.position.x = -12;
+    this.camera.position.y = 12;
   }
 
   tick() {
