@@ -16,7 +16,14 @@
             <v-card-text class="text-xs-left fill-height">
               <v-layout column justify-space-between fill-height >
                 <v-flex d-flex xs12 style="flex-basis:auto">
-                  <div style="overflow-y: auto">{{ annotation.description }}</div>
+                  <v-textarea
+                    v-if="edit"
+                    v-model="annotation.description" box autofocus
+                    label="Beschreibung"
+                    append-icon="keyboard_return"
+                    @click:append="edit=false"
+                  ></v-textarea>
+                  <div v-else style="overflow-y: auto">{{ annotation.description }}</div>
                 </v-flex>
                 <v-flex xs12 style="flex-basis:auto"></v-flex>
                 <v-flex d-flex xs12 style="flex-basis:auto">
@@ -29,9 +36,9 @@
                     >
                       <v-icon
                         color="amber"
-                        style="flex-grow:0 !important;padding-right:4px"
+                        style="flex-grow:0 !important;padding-right:4px;"
                       >star</v-icon>
-                      <div>Priorität</div>
+                      <div style="line-height:12px">Hohe Priorität!</div>
                     </v-flex>
                     <v-flex xs12>
                       <span class="body-1 grey--text text--lighten-1">
@@ -97,19 +104,23 @@
         <v-icon>share</v-icon>
       </v-btn>
       <v-spacer></v-spacer>
-      <div v-if="$store.getters.userIsWorker">
-        <v-btn
-          v-if="!annotation.assigned_to"
-          flat @click="$store.commit('assign', annotation.id)"
-        >Sich selbst zuweisen</v-btn>
-        <v-btn
-          v-else
-          flat disabled
-        >Zugewiesen an {{ annotation.assigned_to }}</v-btn>
-      </div>
-      <div v-else>
-        <v-btn flat>Bearbeiten</v-btn>
-        <v-btn flat @click="deleteAnnotation">Löschen</v-btn>
+      <div v-if="annotation.status !== 'done'">
+        <div v-if="$store.getters.userIsWorker">
+          <v-btn
+            v-if="!annotation.assigned_to"
+            flat @click="$store.commit('assign', annotation.id)"
+          >Sich selbst zuweisen</v-btn>
+          <div v-else>
+            <v-btn
+              flat disabled
+            >Zugewiesen an {{ annotation.assigned_to }}</v-btn>
+            <v-btn flat @click="done">Behoben</v-btn>
+          </div>
+        </div>
+        <div v-else-if="$store.state.currentUser.name === annotation.created_by">
+          <v-btn flat @click="edit = true">Bearbeiten</v-btn>
+          <v-btn flat @click="deleteAnnotation">Löschen</v-btn>
+        </div>
       </div>
     </v-card-actions>
   </v-card>
@@ -124,6 +135,7 @@ export default {
   data() {
     return {
       commentMessage: '',
+      edit: false,
     };
   },
 
@@ -166,6 +178,10 @@ export default {
     },
     toggleFav() {
       this.$store.commit('fav', this.annotation.id);
+    },
+    done() {
+      this.annotation.status = 'done';
+      this.showDialog = false;
     },
   },
 };

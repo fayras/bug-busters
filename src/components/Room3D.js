@@ -196,13 +196,9 @@ export default class Room3D {
     this.camera.position.y = 12;
   }
 
-  tick() {
+  tick = () => {
     if (!this.running) return;
-    requestAnimationFrame(() => this.tick());
     this.render();
-    if(this.onRenderCallback) {
-      this.onRenderCallback();
-    }
     // const time = performance.now();
     // this.animation.update(time * 0.007);
     this.scene.overrideMaterial = this.depthMaterial;
@@ -210,6 +206,8 @@ export default class Room3D {
     this.scene.overrideMaterial = null;
 
     this.composer.render();
+
+    requestAnimationFrame(this.tick);
     //this.renderer.render(this.scene, this.camera);
   }
 

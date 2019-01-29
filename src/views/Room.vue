@@ -1,7 +1,11 @@
 <template>
   <div id="container" class="about">
+    <annotation-card></annotation-card>
     <v-dialog v-model="showDialog" max-width="600px">
-      <new-annotation-card @save="createAnnotation"></new-annotation-card>
+      <new-annotation-card-with-tips
+        @save="createAnnotation"
+        :object="object"
+      ></new-annotation-card-with-tips>
     </v-dialog>
     <div ref="container" class="canvas-container">
       <div
@@ -13,6 +17,7 @@
           left: coords[a.id].left,
           opacity: coords[a.id].opacity
         }"
+        @click="() => selectAnnotation(a.id)"
       >
         <p>{{ a.description }}</p>
       </div>
@@ -24,21 +29,21 @@
 <script>
 import Vue from 'vue';
 import Room3D from '@/components/Room3D';
-import NewAnnotationCard from '@/components/NewAnnotationCard.vue';
+import NewAnnotationCardWithTips from '@/components/NewAnnotationCardWithTips.vue';
+import AnnotationCard from '@/components/AnnotationCard.vue';
 // https://threejs.org/docs/#manual/en/introduction/Loading-3D-models
 
 export default {
   name: 'Room',
-  components: { NewAnnotationCard },
+  components: { NewAnnotationCardWithTips, AnnotationCard },
   props: {
     id: String,
   },
   data() {
     return {
-      room: null,
       coords: {},
       showDialog: false,
-      currentIntersect: null,
+      object: undefined,
     };
   },
   computed: {
@@ -71,6 +76,33 @@ export default {
     },
   },
   mounted() {
+    this.onCameraChange = () => {
+      const canvas = this.room.renderer.domElement;
+      for (let i = 0; i < this.annotationsWithCoords.length; i += 1) {
+        const vector = this.annotationsWithCoords[i].coords.clone();
+        const length = this.room.camera.position.distanceTo(vector);
+
+        // const meshDistance = camera.position.distanceTo(mesh.position);
+        // const spriteDistance = camera.position.distanceTo(vector);
+        // spriteBehindObject = spriteDistance > meshDistance;
+
+        vector.project(this.room.camera);
+
+        vector.x = Math.round((0.5 + vector.x / 2) * (canvas.width / window.devicePixelRatio));
+        vector.y = Math.round((0.5 - vector.y / 2) * (canvas.height / window.devicePixelRatio));
+
+        const length2 = this.room.camera.position.distanceTo(
+          this.room.get3dPoint(vector.x, vector.y),
+        );
+
+        Vue.set(this.coords, this.annotationsWithCoords[i].id, {
+          top: `${vector.y}px`,
+          left: `${vector.x}px`,
+          opacity: length - length2 > 0.2 ? 0.5 : 1,
+        });
+      }
+    };
+    this.currentIntersect = null;
     this.room = new Room3D(this.$refs.canvas, this.$refs.container);
     this.room.onClick(intersect => this.addAnnotation(intersect));
     this.room.onCameraChange(() => this.onCameraChange());
@@ -84,8 +116,12 @@ export default {
     this.room.destroy();
   },
   methods: {
+    selectAnnotation(id) {
+      this.$store.commit('selectAnnotation', id);
+    },
     addAnnotation(intersect) {
       this.currentIntersect = intersect;
+      this.object = this.currentIntersect.name;
       this.showDialog = true;
     },
     createAnnotation(annotation) {
@@ -95,37 +131,11 @@ export default {
         priority: annotation.priority,
         tags: annotation.tags,
         coords: [p.x, p.y, p.z],
+        object: annotation.object,
       });
       this.showDialog = false;
       this.currentIntersect = null;
-    },
-    onCameraChange() {
-      console.log('onCameraChange');
-      for (let i = 0; i < this.annotationsWithCoords.length; i += 1) {
-        const annotation = this.annotationsWithCoords[i];
-
-        const vector = annotation.coords.clone();
-        const canvas = this.room.renderer.domElement;
-        const length = this.room.camera.position.distanceTo(vector);
-
-        // const meshDistance = camera.position.distanceTo(mesh.position);
-        // const spriteDistance = camera.position.distanceTo(vector);
-        // spriteBehindObject = spriteDistance > meshDistance;
-
-        vector.project(this.room.camera);
-
-        vector.x = Math.round((0.5 + vector.x / 2) * (canvas.width / window.devicePixelRatio));
-        vector.y = Math.round((0.5 - vector.y / 2) * (canvas.height / window.devicePixelRatio));
-
-        const point = this.room.get3dPoint(vector.x, vector.y);
-        const length2 = this.room.camera.position.distanceTo(point);
-
-        Vue.set(this.coords, annotation.id, {
-          top: `${vector.y}px`,
-          left: `${vector.x}px`,
-          opacity: length - length2 > 0.1 ? 0.5 : 1,
-        });
-      }
+      this.onCameraChange();
     },
   },
 };
@@ -174,6 +184,8 @@ export default {
 }
 
 .annotation::before {
+    cursor: pointer;
+    pointer-events: all;
     content: '';
     position: absolute;
     top: -30px;

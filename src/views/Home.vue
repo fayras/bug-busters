@@ -29,7 +29,31 @@
             </v-list-tile>
           </v-list>
         </v-tab-item>
-        <v-tab-item>Historie...</v-tab-item>
+        <v-tab-item>
+          <v-list three-line>
+            <v-list-tile
+              v-for="a in annotationsDone"
+              :key="a.id"
+              @click="() => selectAnnotation(a.id)"
+              :class="a.priority ? 'vip' : ''"
+            >
+              <v-list-tile-content>
+                <v-list-tile-title>{{ a.description }}</v-list-tile-title>
+                <v-list-tile-sub-title>{{ formatDate(a.created_at) }}</v-list-tile-sub-title>
+              </v-list-tile-content>
+              <v-list-tile-action>
+                <v-btn flat icon :color="a.liked ? 'primary': ''">
+                  <v-icon>thumb_up</v-icon>
+                </v-btn>
+              </v-list-tile-action>
+              <v-list-tile-action style="min-width: 32px;">
+                <v-btn flat icon :color="a.favorite ? 'primary': ''">
+                  <v-icon>{{ a.favorite ? 'notifications_active': 'notifications' }}</v-icon>
+                </v-btn>
+              </v-list-tile-action>
+            </v-list-tile>
+          </v-list>
+        </v-tab-item>
       </v-tabs>
     </portal>
     <annotation-card></annotation-card>
@@ -123,6 +147,14 @@ export default {
         } // keyA == keyB
         return b.upvotes - a.upvotes;
       });
+    },
+
+    annotationsClaimed() {
+      return this.$store.getters.claimedAnnotations;
+    },
+
+    annotationsDone() {
+      return this.$store.getters.doneAnnotations;
     },
   },
 

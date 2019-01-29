@@ -11,7 +11,7 @@ Vue.use(Vuex);
 const store = new Vuex.Store({
   state: {
     currentUser: {
-      name: 'Santa',
+      name: 'Dimitri',
       type: 'standard',
     },
     currentFloor: 'ib02',
@@ -40,9 +40,10 @@ const store = new Vuex.Store({
           message: 'Testtesttest',
           date: new Date(2019, 0, 10, 12, 50),
         }],
+        object: 'Cube180',
       }, {
         id: 2,
-        description: 'Kaputt!',
+        description: 'Auf dem Stuhl zu sitzen ist wirklich anstrengend. Der wackelt ständig und man fällt eigentlich fast um. Das ist aber mein Lieblingsstuhl, ich hätte den wirklich gerne repariert.',
         upvotes: 319,
         liked: true,
         favorite: false,
@@ -52,10 +53,11 @@ const store = new Vuex.Store({
         created_at: new Date(),
         created_by: 'Klaus',
         status: 'open',
-        tags: '',
-        img: './img/chair.jpg',
+        tags: 'kaputt,stuhl,fehlendes bein',
+        img: '/img/chair.jpg',
         assigned_to: undefined,
         comments: [],
+        object: 'Cube180',
       }, {
         id: 3,
         description: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam',
@@ -69,9 +71,10 @@ const store = new Vuex.Store({
         created_by: 'Klaus',
         status: 'open',
         tags: '',
-        img: './img/chair.jpg',
+        img: '/img/chair.jpg',
         assigned_to: undefined,
         comments: [],
+        object: undefined,
       }, {
         id: 4,
         description: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam',
@@ -85,12 +88,13 @@ const store = new Vuex.Store({
         created_by: 'Klaus',
         status: 'open',
         tags: '',
-        img: './img/chair.jpg',
+        img: '/img/chair.jpg',
         coords: [0.07192592322826385, 0.3394669005943769, -0.9322350293923343],
         assigned_to: undefined,
         comments: [],
+        object: undefined,
       }, {
-        id: 4,
+        id: 5,
         description: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam',
         upvotes: 4,
         liked: true,
@@ -102,10 +106,11 @@ const store = new Vuex.Store({
         created_by: 'Klaus',
         status: 'open',
         tags: '',
-        img: './img/chair.jpg',
+        img: '/img/chair.jpg',
         coords: [0.07192592322826385, 0.3394669005943769, -0.9322350293923343],
         assigned_to: undefined,
         comments: [],
+        object: undefined,
       },
     ],
   },
@@ -154,6 +159,7 @@ const store = new Vuex.Store({
         coords: a.coords,
         tags: a.tags,
         comments: [],
+        object: a.object,
       });
     },
     deleteAnnotation(state, id) {
@@ -178,6 +184,7 @@ const store = new Vuex.Store({
       const a = state.annotations.find(x => x.id === id);
       if (a) {
         a.assigned_to = state.currentUser.name;
+        a.status = 'claimed';
       }
     },
   },
@@ -187,7 +194,23 @@ const store = new Vuex.Store({
     },
     currentAnnotations(state) {
       return state.annotations.filter(
-        a => a.floor === state.currentFloor && a.room === state.currentRoom,
+        a => a.floor === state.currentFloor
+        && a.room === state.currentRoom
+        && (a.status === 'open' || a.status === 'claimed'),
+      );
+    },
+    claimedAnnotations(state) {
+      return state.annotations.filter(
+        a => a.floor === state.currentFloor
+        && a.room === state.currentRoom
+        && a.status === 'claimed',
+      );
+    },
+    doneAnnotations(state) {
+      return state.annotations.filter(
+        a => a.floor === state.currentFloor
+        && a.room === state.currentRoom
+        && a.status === 'done',
       );
     },
     byFloor(state) {

@@ -30,7 +30,7 @@
                         hint="Es können mehrere Tags kommasepariert eingetragen werden"
                       ></v-text-field>
                     </v-flex>
-                    <v-flex xs12>
+                    <v-flex xs12 v-if="$store.getters.userIsVip">
                       <v-checkbox
                         v-model="priority"
                         label="In der Priorität hochstufen"
@@ -52,7 +52,7 @@
 
 <script>
 export default {
-  name: 'AnnotationCard',
+  name: 'NewAnnotationCard',
   data() {
     return {
       desc: '',
